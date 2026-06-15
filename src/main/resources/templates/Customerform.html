@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Edit Customer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Plus Jakarta Sans',sans-serif; min-height:100vh; background:#f8fafc; display:flex; align-items:center; justify-content:center; }
+        .card { background:white; border-radius:20px; padding:40px; width:100%; max-width:480px; box-shadow:0 10px 40px rgba(0,0,0,0.08); border-top:4px solid #f59e0b; }
+        .back { display:inline-flex; align-items:center; color:#f59e0b; font-size:13px; font-weight:600; text-decoration:none; margin-bottom:24px; }
+        .back:hover { text-decoration:underline; }
+        h2 { font-size:26px; font-weight:800; color:#0f172a; margin-bottom:6px; }
+        .sub { color:#94a3b8; font-size:14px; margin-bottom:28px; }
+        .field { margin-bottom:18px; }
+        label { display:block; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#64748b; margin-bottom:7px; }
+        input, select { width:100%; padding:12px 16px; border:1.5px solid #e2e8f0; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; color:#1e293b; outline:none; transition:0.2s; background:#f8fafc; }
+        input:focus, select:focus { border-color:#f59e0b; background:white; box-shadow:0 0 0 3px rgba(245,158,11,0.1); }
+        .btn { width:100%; padding:14px; background:#f59e0b; color:white; border:none; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; cursor:pointer; margin-top:6px; transition:0.2s; }
+        .btn:hover { background:#d97706; transform:translateY(-1px); box-shadow:0 8px 20px rgba(245,158,11,0.3); }
+    </style>
+</head>
+<body>
+<div class="card">
+    <a th:href="@{/customers}" class="back">← Back to List</a>
+    <h2>Edit Customer</h2>
+    <p class="sub">Update the customer details</p>
+    <form th:action="@{/customers/edit}" th:object="${customer}" method="POST">
+        <!-- hidden id — CRITICAL for update to work! -->
+        <input type="hidden" th:field="*{id}"/>
+        <div class="field"><label>Name</label><input type="text" th:field="*{name}" required/></div>
+        <div class="field"><label>Email</label><input type="email" th:field="*{email}" required/></div>
+        <div class="field"><label>Phone</label><input type="text" th:field="*{phone}" required/></div>
+        <div class="field"><label>City</label><input type="text" th:field="*{city}" required/></div>
+        <div class="field">
+            <label>Status</label>
+            <select th:field="*{status}">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Prospect">Prospect</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Update Customer →</button>
+    </form>
+</div>
+</body>
+</html>

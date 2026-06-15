@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Delete Customer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Plus Jakarta Sans',sans-serif;
+            min-height:100vh;
+            background:#f8fafc;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+        .card {
+            background:white;
+            border-radius:20px;
+            padding:48px 40px;
+            width:100%;
+            max-width:440px;
+            box-shadow:0 10px 40px rgba(0,0,0,0.08);
+            text-align:center;
+            animation: pop 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        @keyframes pop {
+            from { opacity:0; transform:scale(0.95); }
+            to   { opacity:1; transform:scale(1); }
+        }
+        .icon {
+            width:70px; height:70px;
+            background:#fff1f2;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin:0 auto 24px;
+            font-size:32px;
+            border: 2px solid #fecdd3;
+        }
+        h2 {
+            font-size:24px;
+            font-weight:800;
+            color:#0f172a;
+            margin-bottom:10px;
+        }
+        .sub {
+            color:#94a3b8;
+            font-size:14px;
+            line-height:1.6;
+            margin-bottom:32px;
+        }
+        .customer-name {
+            color:#e11d48;
+            font-weight:700;
+        }
+        .info-box {
+            background:#f8fafc;
+            border:1px solid #e2e8f0;
+            border-radius:12px;
+            padding:16px 20px;
+            margin-bottom:28px;
+            text-align:left;
+        }
+        .info-row {
+            display:flex;
+            justify-content:space-between;
+            padding:6px 0;
+            font-size:14px;
+        }
+        .info-label { color:#94a3b8; font-weight:600; }
+        .info-value { color:#1e293b; font-weight:600; }
+        .btn-group {
+            display:flex;
+            gap:12px;
+        }
+        .btn-cancel {
+            flex:1;
+            padding:14px;
+            background:#f1f5f9;
+            color:#64748b;
+            border:none;
+            border-radius:10px;
+            font-family:'Plus Jakarta Sans',sans-serif;
+            font-size:15px;
+            font-weight:700;
+            cursor:pointer;
+            text-decoration:none;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            transition:0.2s;
+        }
+        .btn-cancel:hover { background:#e2e8f0; }
+        .btn-delete {
+            flex:1;
+            padding:14px;
+            background:#e11d48;
+            color:white;
+            border:none;
+            border-radius:10px;
+            font-family:'Plus Jakarta Sans',sans-serif;
+            font-size:15px;
+            font-weight:700;
+            cursor:pointer;
+            text-decoration:none;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            transition:0.2s;
+        }
+        .btn-delete:hover {
+            background:#be123c;
+            transform:translateY(-1px);
+            box-shadow:0 8px 20px rgba(225,29,72,0.3);
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="icon">🗑️</div>
+    <h2>Delete Customer?</h2>
+    <p class="sub">
+        You are about to permanently delete
+        <span class="customer-name" th:text="${customer.name}"></span>.
+        This action cannot be undone!
+    </p>
+
+    <div class="info-box">
+        <div class="info-row">
+            <span class="info-label">Name</span>
+            <span class="info-value" th:text="${customer.name}"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value" th:text="${customer.email}"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">City</span>
+            <span class="info-value" th:text="${customer.city}"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="info-value" th:text="${customer.status}"></span>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <a th:href="@{/customers}" class="btn-cancel">← Cancel</a>
+        <a th:href="@{/customers/delete/confirm/{id}(id=${customer.id})}" class="btn-delete">Yes, Delete</a>
+    </div>
+</div>
+</body>
+</html>

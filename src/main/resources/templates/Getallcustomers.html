@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CRM - Customers</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; background: #f8fafc; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .header h2 { font-size: 28px; font-weight: 800; color: #0f172a; }
+        .header p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+        .btn-add { background: #0ea5e9; color: white; padding: 12px 22px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; transition: 0.2s; white-space: nowrap; }
+        .btn-add:hover { background: #0284c7; transform: translateY(-1px); box-shadow: 0 8px 20px rgba(14,165,233,0.3); }
+
+        /* SEARCH + FILTER BAR */
+        .toolbar {
+            background: white;
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 38px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            color: #1e293b;
+            outline: none;
+            transition: 0.2s;
+            background: #f8fafc;
+        }
+        .search-box input:focus { border-color: #0ea5e9; background: white; box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
+        .search-box::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+
+        select {
+            padding: 10px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            color: #1e293b;
+            outline: none;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        select:focus { border-color: #0ea5e9; background: white; }
+
+        .btn-search {
+            padding: 10px 20px;
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-search:hover { background: #0284c7; }
+
+        .btn-reset {
+            padding: 10px 20px;
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-reset:hover { background: #e2e8f0; }
+
+        /* SORT BUTTONS */
+        .sort-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .sort-label { font-size: 13px; color: #94a3b8; font-weight: 600; }
+        .btn-sort {
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: 0.2s;
+            border: 1.5px solid #e2e8f0;
+            color: #64748b;
+            background: white;
+        }
+        .btn-sort:hover { border-color: #0ea5e9; color: #0ea5e9; }
+        .btn-sort.active { background: #0ea5e9; color: white; border-color: #0ea5e9; }
+
+        /* TABLE */
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #0f172a; color: white; }
+        thead th { padding: 16px 20px; text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+        tbody tr { border-bottom: 1px solid #f1f5f9; transition: 0.15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f0f9ff; }
+        td { padding: 16px 20px; font-size: 14px; color: #334155; }
+        .badge-active { background: #dcfce7; color: #16a34a; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-inactive { background: #fee2e2; color: #dc2626; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-prospect { background: #fef9c3; color: #ca8a04; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .actions { display: flex; gap: 8px; }
+        .btn-edit { background: #f0f9ff; color: #0ea5e9; border: 1px solid #bae6fd; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; transition: 0.2s; }
+        .btn-edit:hover { background: #0ea5e9; color: white; }
+        .btn-del { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none; transition: 0.2s; }
+        .btn-del:hover { background: #e11d48; color: white; }
+        .empty { text-align: center; padding: 60px; color: #94a3b8; }
+
+        /* RESULTS COUNT */
+        .results-info { font-size: 13px; color: #94a3b8; margin-bottom: 12px; }
+        .results-info span { color: #0ea5e9; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div>
+            <h2>CRM Dashboard</h2>
+            <p>Manage all your customers</p>
+        </div>
+        <a th:href="@{/customers/add}" class="btn-add">+ Add Customer</a>
+    </div>
+
+    <!-- SEARCH + FILTER FORM -->
+    <!-- th:action sends GET request with params in URL -->
+    <form th:action="@{/customers}" method="GET">
+        <div class="toolbar">
+            <!-- Search box — th:value keeps typed text after submit! -->
+            <div class="search-box">
+                <input type="text" name="search" th:value="${search}"
+                       placeholder="Search by name or city..."/>
+            </div>
+
+            <!-- Status filter dropdown — th:selected keeps selection! -->
+            <select name="status">
+                <option value="">All Status</option>
+                <option value="Active"    th:selected="${status == 'Active'}">Active</option>
+                <option value="Inactive"  th:selected="${status == 'Inactive'}">Inactive</option>
+                <option value="Prospect"  th:selected="${status == 'Prospect'}">Prospect</option>
+            </select>
+
+            <!-- Hidden fields to keep sort when searching -->
+            <input type="hidden" name="sortBy" th:value="${sortBy}"/>
+            <input type="hidden" name="order"  th:value="${order}"/>
+
+            <button type="submit" class="btn-search">Search</button>
+            <a th:href="@{/customers}" class="btn-reset">Reset</a>
+        </div>
+    </form>
+
+    <!-- SORT BUTTONS -->
+    <div class="sort-bar">
+        <span class="sort-label">Sort by:</span>
+
+        <!-- Sort by Name ASC -->
+        <a th:href="@{/customers(search=${search},status=${status},sortBy='name',order='asc')}"
+           th:classappend="${sortBy == 'name' and order == 'asc'} ? 'active' : ''"
+           class="btn-sort">Name ↑</a>
+
+        <!-- Sort by Name DESC -->
+        <a th:href="@{/customers(search=${search},status=${status},sortBy='name',order='desc')}"
+           th:classappend="${sortBy == 'name' and order == 'desc'} ? 'active' : ''"
+           class="btn-sort">Name ↓</a>
+
+        <!-- Sort by City ASC -->
+        <a th:href="@{/customers(search=${search},status=${status},sortBy='city',order='asc')}"
+           th:classappend="${sortBy == 'city' and order == 'asc'} ? 'active' : ''"
+           class="btn-sort">City ↑</a>
+
+        <!-- Sort by City DESC -->
+        <a th:href="@{/customers(search=${search},status=${status},sortBy='city',order='desc')}"
+           th:classappend="${sortBy == 'city' and order == 'desc'} ? 'active' : ''"
+           class="btn-sort">City ↓</a>
+    </div>
+
+    <!-- RESULTS COUNT -->
+    <p class="results-info">
+        Showing <span th:text="${#lists.size(customers)}"></span> customers
+    </p>
+
+    <!-- TABLE -->
+    <div class="card">
+        <table th:if="${not #lists.isEmpty(customers)}">
+            <thead>
+            <tr>
+                <th>ID</th><th>Name</th><th>Email</th>
+                <th>Phone</th><th>City</th><th>Status</th><th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="customer : ${customers}">
+                <td th:text="${customer.id}"></td>
+                <td th:text="${customer.name}"></td>
+                <td th:text="${customer.email}"></td>
+                <td th:text="${customer.phone}"></td>
+                <td th:text="${customer.city}"></td>
+                <td>
+                    <span th:if="${customer.status == 'Active'}"   class="badge-active">Active</span>
+                    <span th:if="${customer.status == 'Inactive'}" class="badge-inactive">Inactive</span>
+                    <span th:if="${customer.status == 'Prospect'}" class="badge-prospect">Prospect</span>
+                </td>
+                <td>
+                    <div class="actions">
+                        <a th:href="@{/customers/edit/{id}(id=${customer.id})}"   class="btn-edit">Edit</a>
+                        <a th:href="@{/customers/delete/{id}(id=${customer.id})}" class="btn-del">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="empty" th:if="${#lists.isEmpty(customers)}">
+            <p>No customers found!</p>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
